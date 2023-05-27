@@ -1,5 +1,5 @@
 const express = require("express");
-
+const mysqlServices = require("../services/mysqlServices");
 class UserController {
   constructor() {}
 
@@ -19,12 +19,14 @@ class UserController {
       const account = {
         ...req.body,
       };
-      const isCorrect = await firebaseService.authentication(account);
-      if (isCorrect) {
-        const user = await firebaseService.getUserByUsername(account);
-        req.session.user = user.id;
-        return res.send({ message: "Login complete", id: req.session.user });
-      }
+      const hasUser = await mysqlServices.hasUser({ id: req.body.id });
+      console.log(ha);
+      // const isCorrect = await firebaseService.authentication(account);
+      // if (isCorrect) {
+      //   const user = await firebaseService.getUserByUsername(account);
+      //   req.session.user = user.id;
+      //   return res.send({ message: "Login complete", id: req.session.user });
+      // }
       return res.send({ message: "Login failed" });
     } catch (err) {
       console.log("Error: ", err);
@@ -51,4 +53,4 @@ class UserController {
   }
 }
 
-export default UserController;
+module.exports = new UserController();
