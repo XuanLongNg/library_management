@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-export default class Hashing {
+class Hashing {
   constructor() {
     this.saltRound = 10;
   }
@@ -12,3 +12,4 @@ export default class Hashing {
     return result;
   }
 }
+module.exports = new Hashing();

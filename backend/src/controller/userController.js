@@ -16,17 +16,14 @@ class UserController {
   }
   async Login(req, res) {
     try {
-      const account = {
+      const data = {
         ...req.body,
       };
-      const hasUser = await mysqlServices.hasUser({ id: req.body.id });
-      console.log(ha);
-      // const isCorrect = await firebaseService.authentication(account);
-      // if (isCorrect) {
-      //   const user = await firebaseService.getUserByUsername(account);
-      //   req.session.user = user.id;
-      //   return res.send({ message: "Login complete", id: req.session.user });
-      // }
+      const authenticate = await mysqlServices.authenticate(data);
+      if (authenticate) {
+        const userData = await mysqlServices.getUser(data);
+        return res.send({ message: "Login complete", id: userData.id });
+      }
       return res.send({ message: "Login failed" });
     } catch (err) {
       console.log("Error: ", err);
@@ -35,19 +32,55 @@ class UserController {
   }
   async Register(req, res) {
     try {
-      const account = {
+      const data = {
         ...req.body,
       };
-      const hasUser = await firebaseService.hasUser(account);
+      const hasUser = await mysqlServices.hasUser(data);
 
       if (hasUser) {
-        return res.send({ message: "User exits", data: account });
+        return res.send({ message: "User exits" });
       } else {
-        await firebaseService.addUser(account);
+        await mysqlServices.addUser(data);
         return res.send({ message: "Register complete" });
       }
     } catch (err) {
       console.log("Error: ", err);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async getBooks(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      const booksData = await mysqlServices.getBooks(data);
+      return res.status(200).send(booksData);
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async addBook(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      await mysqlServices.addBook(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async updateBook(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      await mysqlServices.updateBook(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
       res.status(404).send({ message: "Server internal error" });
     }
   }
