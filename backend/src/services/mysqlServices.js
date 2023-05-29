@@ -46,6 +46,14 @@ class MysqlServices {
     console.log("Data: ", data);
     return data;
   }
+  async getBook({ id }) {
+    const query = `select * from book where id = ${id}`;
+    console.log(query);
+    const [data] = await MysqlConfig.promise().query(query);
+    console.log("Data: ", data);
+    if (data.length > 0) return data[0];
+    return undefined;
+  }
   async addBook({
     title,
     author,
@@ -76,9 +84,32 @@ class MysqlServices {
       ` where id = "${id}"`;
     await MysqlConfig.promise().query(query);
   }
-  async updateBook({ id }) {
-    const query = `delete from book
-      where id = ${id};`;
+  async deleteBook({ id }) {
+    let query = `delete from feedback where id_item like ${id};`;
+    await MysqlConfig.promise().query(query);
+    query = `delete from item where id = ${id};`;
+    await MysqlConfig.promise().query(query);
+    query = `delete from book where id = ${id};`;
+    await MysqlConfig.promise().query(query);
+  }
+  async addItem({ id, for_sale, cost, purchase_price, rent_price, quantity }) {
+    const query =
+      "insert into item(id, for_sale, cost, purchase_price,rent_price, quantity) " +
+      `values (${id},${for_sale},${cost}, ${purchase_price}, ${rent_price}, ${quantity});`;
+    await MysqlConfig.promise().query(query);
+  }
+  async updateItem({
+    id,
+    for_sale,
+    cost,
+    purchase_price,
+    rent_price,
+    quantity,
+  }) {
+    const query =
+      "update item " +
+      `set for_sale = ${for_sale},cost = ${cost}, purchase_price =${purchase_price}, rent_price = ${rent_price}, quantity =${quantity}` +
+      ` where id = ${id}`;
     await MysqlConfig.promise().query(query);
   }
 }

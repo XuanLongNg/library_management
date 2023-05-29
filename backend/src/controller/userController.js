@@ -53,8 +53,22 @@ class UserController {
       const data = {
         ...req.body,
       };
-      const booksData = await mysqlServices.getBooks(data);
+      const booksData = await mysqlServices.getBooks();
       return res.status(200).send(booksData);
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async getBook(req, res) {
+    try {
+      const id = req.params.id;
+      const data = {
+        ...req.body,
+        id,
+      };
+      const bookData = await mysqlServices.getBook(data);
+      if (bookDataz) return res.status(200).send(bookData);
     } catch (error) {
       console.log("Error: ", error);
       res.status(404).send({ message: "Server internal error" });
@@ -78,6 +92,41 @@ class UserController {
         ...req.body,
       };
       await mysqlServices.updateBook(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async deleteBook(req, res) {
+    try {
+      const id = req.params.id;
+      console.log(id);
+      await mysqlServices.deleteBook({ id });
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async addItem(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      await mysqlServices.addItem(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async updateItem(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      await mysqlServices.updateItem(data);
       return res.status(200).send({ message: "Success" });
     } catch (error) {
       console.log("Error: ", error);
