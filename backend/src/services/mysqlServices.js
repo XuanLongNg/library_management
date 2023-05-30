@@ -34,6 +34,7 @@ class MysqlServices {
     return false;
   }
   async addUser({ name, username, password, email, role }) {
+    password = await Hashing.hash(password);
     const query =
       "insert into user(name, username, password, email,role)" +
       `values ("${name}","${username}","${password}", "${email}", "${role}");`;
@@ -98,6 +99,12 @@ class MysqlServices {
       `values (${id},${for_sale},${cost}, ${purchase_price}, ${rent_price}, ${quantity});`;
     await MysqlConfig.promise().query(query);
   }
+  async getItem({ id }) {
+    const query = "select * from item" + ` where id = '${id}'`;
+    const [data] = await MysqlConfig.promise().query(query);
+    if (data.length > 0) return data[0];
+    return undefined;
+  }
   async updateItem({
     id,
     for_sale,
@@ -110,6 +117,81 @@ class MysqlServices {
       "update item " +
       `set for_sale = ${for_sale},cost = ${cost}, purchase_price =${purchase_price}, rent_price = ${rent_price}, quantity =${quantity}` +
       ` where id = ${id}`;
+    await MysqlConfig.promise().query(query);
+  }
+  async deleteBook({ id }) {
+    let query = `delete from feedback where id_item like ${id};`;
+    await MysqlConfig.promise().query(query);
+    query = `delete from item where id = ${id};`;
+    await MysqlConfig.promise().query(query);
+    query = `delete from book where id = ${id};`;
+    await MysqlConfig.promise().query(query);
+  }
+  async createBill({
+    id_user,
+    id_item,
+    time,
+    time_start,
+    time_end,
+    money,
+    status,
+  }) {
+    if (!time_start) time_start = null;
+    else time_start = `"${time_start}"`;
+    if (!time_end) time_end = null;
+    else time_end = `"${time_end}"`;
+    if (!money) money = null;
+    else money = `"${money}"`;
+
+    const query =
+      "insert into bill (id_user, id_item, time, time_start, time_end, money, status)" +
+      ` values(${id_user}, ${id_item}, "${time}", ${time_start}, ${time_end}, ${money}, "${status}")`;
+    await MysqlConfig.promise().query(query);
+  }
+  async updateBill({
+    id,
+    id_user,
+    id_item,
+    time,
+    time_start,
+    time_end,
+    money,
+    status,
+  }) {
+    if (!time_start) time_start = null;
+    else time_start = `"${time_start}"`;
+    if (!time_end) time_end = null;
+    else time_end = `"${time_end}"`;
+    if (!money) money = null;
+    else money = `"${money}"`;
+
+    const query =
+      "update bill" +
+      ` set id_user = ${id_user}, id_item = ${id_item}, time = "${time}", time_start = ${time_start}, time_end = ${time_end}, money = ${money}, status = "${status}" ` +
+      `where id = ${id}`;
+    await MysqlConfig.promise().query(query);
+  }
+  async addFeedback({ id_user, id_item, time, star, comment }) {
+    if (!comment) comment = null;
+    else comment = `"${comment}"`;
+    const query =
+      "insert into feedback (id_user, id_item, time, star, comment)" +
+      ` values(${id_user}, ${id_item}, "${time}", ${star}, ${comment})`;
+    await MysqlConfig.promise().query(query);
+  }
+  async updateFeedback({ id_user, id_item, time, star, comment }) {
+    if (!comment) comment = null;
+    else comment = `"${comment}"`;
+    const query =
+      "update feedback" +
+      ` set time = "${time}", star = ${star}, comment = ${comment} ` +
+      `where id_user = ${id_user} and id_item = ${id_item} `;
+    await MysqlConfig.promise().query(query);
+  }
+  async deleteFeedback({ id_user, id_item }) {
+    const query =
+      "delete from feedback " +
+      `where id_user = ${id_user} and id_item = ${id_item} `;
     await MysqlConfig.promise().query(query);
   }
 }

@@ -68,7 +68,7 @@ class UserController {
         id,
       };
       const bookData = await mysqlServices.getBook(data);
-      if (bookDataz) return res.status(200).send(bookData);
+      if (bookData) return res.status(200).send(bookData);
     } catch (error) {
       console.log("Error: ", error);
       res.status(404).send({ message: "Server internal error" });
@@ -121,12 +121,88 @@ class UserController {
       res.status(404).send({ message: "Server internal error" });
     }
   }
+  async getItem(req, res) {
+    try {
+      const id = req.params.id;
+      const data = {
+        ...req.body,
+        id,
+      };
+      const itemData = await mysqlServices.getItem(data);
+      if (itemData) return res.status(200).send(itemData);
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
   async updateItem(req, res) {
     try {
       const data = {
         ...req.body,
       };
       await mysqlServices.updateItem(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async createBill(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      await mysqlServices.createBill(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async updateBill(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      await mysqlServices.updateBill(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async addFeedback(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      await mysqlServices.addFeedback(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async updateFeedback(req, res) {
+    try {
+      const data = {
+        ...req.body,
+      };
+      await mysqlServices.updateFeedback(data);
+      return res.status(200).send({ message: "Success" });
+    } catch (error) {
+      console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async deleteFeedback(req, res) {
+    try {
+      console.log(req.params);
+      const id_user = req.params.id_user;
+      const id_item = req.params.id_item;
+
+      // console.log(id);
+      await mysqlServices.deleteFeedback({ id_user, id_item });
       return res.status(200).send({ message: "Success" });
     } catch (error) {
       console.log("Error: ", error);
