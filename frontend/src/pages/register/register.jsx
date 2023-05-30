@@ -2,55 +2,53 @@ import React, { useState } from "react";
 import { Button, Form, Input, notification, Divider } from "antd";
 import Style from "./style";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
 import { URL_BASE } from "../../constants";
-
-const Login = () => {
-  const [isLogin, SetIsLogin] = useState(false);
+const Register = () => {
   const [loading, setLoading] = useState(false);
   const onFinish = (values) => {
+    // setIsRegisted(false);
     setLoading(true);
     const data = {
       username: values.username,
       password: values.password,
+      name: values.name,
+      email: values.email,
+      role: "user",
     };
-    const url_api = URL_BASE + "/api/user/login";
+
+    const url_api = URL_BASE + "/api/user/register";
     axios
       .post(url_api, data)
       .then((response) => {
         const message = response.data.message;
-        console.log(message);
-        if (message === "Login complete") {
-          document.cookie = response.data.id;
-          console.log(document.cookie);
-          notification.success({
-            message: "Login complete",
-          });
-          SetIsLogin(true);
+        if (message === "User exits") {
+          notification.error({ message: "User exits" });
           setLoading(false);
-          return;
         } else {
-          notification.error({
-            message: "User or password incorrect",
+          notification.success({
+            message: "Completed",
+            description: "You will return to the login page in 3 seconds",
           });
-          SetIsLogin(false);
-          setLoading(false);
-          return;
+          setTimeout(() => {
+            setLoading(false);
+            window.location.href = "/login";
+          }, 3000);
+          //   setIsRegisted(true);
         }
+        console.log(message);
       })
       .catch((error) => {
+        console.error(error);
         notification.error({
           message: "Server error",
         });
         setLoading(false);
-        console.error(error);
       });
   };
 
   const onFinishFailed = (errorInfo) => {
-    // console.log("Failed:", errorInfo);
+    console.log("Failed:", errorInfo);
   };
-
   return (
     <Style>
       <div className="container">
@@ -66,7 +64,7 @@ const Login = () => {
           layout="vertical"
         >
           <Form.Item className="container-header d-flex justify-content-center align-items-center">
-            <h1>Login</h1>
+            <h1>Register</h1>
           </Form.Item>
           <Form.Item
             className="input"
@@ -92,6 +90,32 @@ const Login = () => {
             <Input.Password />
           </Form.Item>
 
+          <Form.Item
+            className="input"
+            label={<span style={{ color: "#fff" }}>Name</span>}
+            name="name"
+            wrapperCol={{ span: 24 }}
+            rules={[
+              { required: true, message: "Please input your first name!" },
+            ]}
+            colon={false}
+            required={false}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            className="input"
+            label={<span style={{ color: "#fff" }}>Email</span>}
+            name="email"
+            wrapperCol={{ span: 24 }}
+            rules={[
+              { required: true, message: "Please input your last name!" },
+            ]}
+            colon={false}
+            required={false}
+          >
+            <Input />
+          </Form.Item>
           <Form.Item wrapperCol={{ span: 24 }}>
             <Button
               className="btn"
@@ -106,9 +130,9 @@ const Login = () => {
             <Divider style={{ borderColor: "white", color: "white" }}>
               or
             </Divider>
-            <a href="/register">
+            <a href="/login">
               <Button className="btn" type="primary">
-                Register
+                Login
               </Button>
             </a>
           </Form.Item>
@@ -118,4 +142,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

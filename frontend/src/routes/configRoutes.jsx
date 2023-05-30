@@ -3,6 +3,7 @@ import { Navigate } from "react-router";
 // import HomePage from "../pages/main";
 import AppRoutes from "./appRoutes";
 import Login from "../pages/login/login";
+import Register from "../pages/register/register";
 
 const ConfigRoutes = [
   {
@@ -13,6 +14,11 @@ const ConfigRoutes = [
   {
     path: AppRoutes.LOGIN,
     element: <Login />,
+    // layout: MainLayout,
+  },
+  {
+    path: AppRoutes.REGISTER,
+    element: <Register />,
     // layout: MainLayout,
   },
   {
