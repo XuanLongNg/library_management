@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useRoutes } from "react-router-dom";
+import ConfigRoutes from "./routes/configRoutes";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const convertRoutes = ConfigRoutes.map((route) => {
+    const { layout, element: elementRoute } = route;
+    let element = elementRoute;
+    if (layout) {
+      const Layout = layout;
+      element = <Layout>{element}</Layout>;
+    }
+    return {
+      ...route,
+      element,
+    };
+  });
+  const element = useRoutes(convertRoutes);
+  return <div className="App">{element}</div>;
 }
 
 export default App;
