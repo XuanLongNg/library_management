@@ -26,25 +26,23 @@ import { URL_BASE } from "../../constants";
 const firebaseConfig = new FirebaseConfig();
 const image_default =
   "https://firebasestorage.googleapis.com/v0/b/quiz-d364f.appspot.com/o/default-thumbnail.jpg?alt=media&token=574f86da-559e-4a5d-a074-2b80bc211553&_gl=1*13sbxxd*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NTUzNzU4OS42NC4xLjE2ODU1Mzc4NDQuMC4wLjA.";
-const BookView = () => {
-  const { id } = useParams();
+const BookView = (props) => {
+  const { id, action } = useParams();
+  const actionVariable = action === "view" ? "edit" : action;
+  const [actionApi, setActionApi] = useState(actionVariable);
+  // if (action === "view") setActionApi("edit");
+  // else setActionApi(action);
+  console.log("Url: ", id, actionVariable);
   const formRef = useRef();
-  console.log("Url: ", id);
   const [image, setImage] = useState();
   const [imageFile, setImageFile] = useState();
-
   const [imageUrl, setImageUrl] = useState(image_default);
 
-  const [loading, setLoading] = useState();
   const handleFileUpload = (file) => {
-    setImage(file);
+    setImageFile(file);
   };
   const handleFileChange = (files) => {
-    console.log("Files: ", files);
     const file = files;
-    setImage(file);
-    console.log("File name:", file.name);
-    setImageFile(file);
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -66,7 +64,6 @@ const BookView = () => {
       category: dataTmp.category,
       image: url,
     };
-    console.log("Data: ", data);
     try {
       const url_api = URL_BASE + "/api/user/" + action;
       const response = await axios.post(url_api, data);
@@ -76,7 +73,6 @@ const BookView = () => {
       } else {
         notification.error({ message: "Error" });
       }
-      console.log(message);
     } catch (err) {
       console.log("Error: " + err);
       throw err;
@@ -84,67 +80,20 @@ const BookView = () => {
   };
   const handleSubmit = async () => {
     const form = formRef.current;
-
-    // Access the form data
     const values = form.getFieldsValue();
     if (!imageFile) {
       console.log(id, values, imageUrl, "updateBook");
       await handleApi(id, values, imageUrl, "updateBook");
       return;
     }
-    console.log("Form:", values);
     const uniqueFilename = `${uuidv4()}_${imageFile.name}`;
-    console.log(uniqueFilename, imageFile.name, imageFile);
     const storageRef = ref(firebaseConfig.getStorage(), uniqueFilename);
-    console.log("Ref: ", storageRef);
-    return;
-
-    // // 'file' comes from the Blob or File API
-    // const metadata = {
-    //   contentType: "image/jpeg",
-    // };
-    // uploadBytes(storageRef, image, metadata)
-    //   .then((snapshot) => {
-    //     console.log("Uploaded a blob or file!");
-    //     return getDownloadURL(storageRef);
-    //   })
-    //   .then((downloadURL) => {
-    //     console.log("Download URL:", downloadURL);
-    //     setImageUrl(downloadURL);
-    //     const data = {
-    //       id: id,
-    //       username: values.username,
-    //       password: values.password,
-    //       information: {
-    //         fname: values.fname,
-    //         lname: values.lname,
-    //         dob: moment(values.dob.$d).format("YYYY-MM-sDD"),
-    //         address: values.address,
-    //         introduce: values.introduce,
-    //         image: downloadURL,
-    //       },
-    //     };
-    //     console.log(values.dob.$d);
-
-    //     console.log(data);
-
-    //     const url_api = URL_BASE + "/api/user/register";
-    //     axios
-    //       .post(url_api, data)
-    //       .then((response) => {
-    //         const message = response.data.message;
-    //         if (message === "User exits") {
-    //           notification.error({ message: "User exits" });
-    //         } else {
-    //           notification.success({ message: "Completed" });
-    //         }
-    //         console.log(message);
-    //       })
-    //       .catch((error) => {
-    //         console.error(error);
-    //       });
-    //     // Perform any additional actions here, such as updating state or displaying a success message.
-    //   });
+    const metadata = {
+      contentType: "image/jpeg",
+    };
+    const snapshot = await uploadBytes(storageRef, imageFile, metadata);
+    const downloadURL = await getDownloadURL(storageRef);
+    await handleApi(id, values, downloadURL, "updateBook");
   };
   return (
     <Style>
@@ -155,10 +104,30 @@ const BookView = () => {
             <Form ref={formRef} layout="vertical">
               <Col>
                 <Row>
-                  <Form.Item label="Title" className="input-left" name="title">
+                  <Form.Item
+                    label="Title"
+                    className="input-left"
+                    name="title"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input title!",
+                      },
+                    ]}
+                  >
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Author" className="" name="author">
+                  <Form.Item
+                    label="Author"
+                    className="input-right"
+                    name="author"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input author!",
+                      },
+                    ]}
+                  >
                     <Input />
                   </Form.Item>
                 </Row>
@@ -170,13 +139,23 @@ const BookView = () => {
                     label="Release date"
                     className="input-left"
                     name="release_date"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input release date!",
+                      },
+                    ]}
                   >
                     <DatePicker
                       style={{ width: "100%" }}
                       format={"YYYY/MM/DD"}
                     />
                   </Form.Item>
-                  <Form.Item label="Number of pages" name="nop">
+                  <Form.Item
+                    className="input-right"
+                    label="Number of pages"
+                    name="nop"
+                  >
                     <Input type="number" />
                   </Form.Item>
                 </Row>
@@ -210,7 +189,7 @@ const BookView = () => {
               className="image"
               width={300}
               height={300}
-              preview={false}
+              // preview={false}
               src={image}
               fallback="https://firebasestorage.googleapis.com/v0/b/quiz-d364f.appspot.com/o/default-thumbnail.jpg?alt=media&token=574f86da-559e-4a5d-a074-2b80bc211553&_gl=1*13sbxxd*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NTUzNzU4OS42NC4xLjE2ODU1Mzc4NDQuMC4wLjA."
             />
@@ -228,10 +207,18 @@ const BookView = () => {
           >
             Save
           </Button>
-          <Button className="btn-action" type="primary">
+          <Button
+            className="btn-action"
+            type="primary"
+            disabled={actionApi === "edit" ? true : false}
+          >
             Add
           </Button>
-          <Button className="btn-action" type="primary">
+          <Button
+            className="btn-action"
+            type="primary"
+            disabled={actionApi === "new" ? true : false}
+          >
             Edit
           </Button>
         </div>

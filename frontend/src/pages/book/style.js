@@ -11,15 +11,23 @@ const Style = styled.div`
     border-radius: 10px;
     padding: 1em;
     .form-container {
+      width: 50%;
       margin: 0 1em;
       .input-left {
-        margin: 0 1em 0 0;
+        margin: 0 4% 0 0;
+        width: 48%;
+      }
+      .input-right {
+        /* margin: 0 1em 0 0; */
         width: 48%;
       }
     }
     .image-container {
       margin: 0 1em;
+      width: 40%;
+
       .btn-upload {
+        width: 40%;
         margin-bottom: 1em;
       }
       .image {
@@ -27,7 +35,7 @@ const Style = styled.div`
       }
     }
     .divider-container {
-      width: 50%;
+      width: 80%;
       margin: auto;
       .divider {
         margin-top: 0;
@@ -36,7 +44,7 @@ const Style = styled.div`
     }
     .container-btn {
       .btn-action {
-        margin-left: 1em;
+        margin: 0 1em;
       }
     }
   }

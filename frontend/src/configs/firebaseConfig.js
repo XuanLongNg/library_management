@@ -2,24 +2,24 @@
 import { initializeApp } from "firebase/app";
 // dotenv.config();
 import { getStorage } from "firebase/storage";
+import { getEnv } from "../utils/getEnv";
 
 class FirebaseConfig {
   constructor() {
     const firebaseConfig = {
-      apiKey: process.env.FIREBASE_APIKEY,
-      authDomain: process.env.FIREBASE_AUTHDOMAIN,
-      projectId: process.env.FIREBASE_PROJECTID,
-      storageBucket: process.env.FIREBASE_STORAGEBUCKET,
-      messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID,
-      appId: process.env.FIREBASE_APPID,
-      measurementId: process.env.FIREBASE_MEASUREMENTID,
+      apiKey: getEnv("REACT_APP_FIREBASE_API_KEY"),
+      authDomain: getEnv("REACT_APP_FIREBASE_AUTH_DOMAIN"),
+      projectId: getEnv("REACT_APP_FIREBASE_PROJECT_ID"),
+      storageBucket: getEnv("REACT_APP_FIREBASE_STORAGE_BUCKET"),
+      messagingSenderId: getEnv("REACT_APP_FIREBASE_MESSAGING_SENDER_ID"),
+      appId: getEnv("REACT_APP_FIREBASE_APP_ID"),
+      measurementId: getEnv("REACT_APP_FIREBASE_MEASUREMENT_ID"),
     };
-    console.log(firebaseConfig);
     this.app = initializeApp(firebaseConfig);
     this.storage = getStorage(this.app);
     console.log("Firebase created");
   }
-  static getStorage() {
+  getStorage() {
     return this.storage;
   }
 }
