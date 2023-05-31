@@ -14,6 +14,7 @@ class FirebaseConfig {
       appId: process.env.FIREBASE_APPID,
       measurementId: process.env.FIREBASE_MEASUREMENTID,
     };
+    console.log(firebaseConfig);
     this.app = initializeApp(firebaseConfig);
     this.storage = getStorage(this.app);
     console.log("Firebase created");

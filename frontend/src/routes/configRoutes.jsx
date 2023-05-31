@@ -4,6 +4,8 @@ import { Navigate } from "react-router";
 import AppRoutes from "./appRoutes";
 import Login from "../pages/login/login";
 import Register from "../pages/register/register";
+import BookList from "../pages/bookList/bookList";
+import BookView from "../pages/book/bookView";
 
 const ConfigRoutes = [
   {
@@ -20,6 +22,14 @@ const ConfigRoutes = [
     path: AppRoutes.REGISTER,
     element: <Register />,
     // layout: MainLayout,
+  },
+  {
+    path: AppRoutes.BOOKVIEW,
+    element: <BookView />,
+  },
+  {
+    path: AppRoutes.BOOKLIST,
+    element: <BookList />,
   },
   {
     path: "*",
