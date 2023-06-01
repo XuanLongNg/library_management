@@ -13,7 +13,7 @@ import {
   notification,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import Style from "./style";
 import axios from "axios";
@@ -26,23 +26,54 @@ import { URL_BASE } from "../../constants";
 const firebaseConfig = new FirebaseConfig();
 const image_default =
   "https://firebasestorage.googleapis.com/v0/b/quiz-d364f.appspot.com/o/default-thumbnail.jpg?alt=media&token=574f86da-559e-4a5d-a074-2b80bc211553&_gl=1*13sbxxd*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NTUzNzU4OS42NC4xLjE2ODU1Mzc4NDQuMC4wLjA.";
-const BookView = (props) => {
+const BookView = () => {
   const { id, action } = useParams();
   const actionVariable = action === "view" ? "edit" : action;
   const [actionApi, setActionApi] = useState(actionVariable);
-  // if (action === "view") setActionApi("edit");
-  // else setActionApi(action);
-  console.log("Url: ", id, actionVariable);
   const formRef = useRef();
   const [image, setImage] = useState();
   const [imageFile, setImageFile] = useState();
   const [imageUrl, setImageUrl] = useState(image_default);
 
+  const defaultBookInformation = {
+    id: "unknown",
+    title: "unknown",
+    author: "unknown",
+    description: "unknown",
+    nop: 0,
+    category: "unknown",
+    image: image_default,
+    release_date: moment(new Date(), "YYYY/MM/DD"),
+  };
+  const [bookInformation, setBookInformation] = useState(
+    defaultBookInformation
+  );
+  useEffect(() => {
+    if (id === 0) return;
+    const getBookInformation = async () => {
+      const url = URL_BASE + "/api/user/getBook/" + id;
+      const response = await axios.get(url);
+      const data = response.data;
+      data.release_date = moment(data.release_date, "YYYY/MM/DD");
+      formRef.current?.setFieldsValue(data);
+      setImage(data.image);
+      console.log("Log UseEffect", data);
+      setBookInformation(data);
+      console.log("Image", data.image);
+    };
+    getBookInformation();
+    console.log("Log Book effect", bookInformation);
+    console.log("Use Effect");
+  }, []);
+
   const handleFileUpload = (file) => {
+    console.log("Handle file upload");
+
     setImageFile(file);
   };
   const handleFileChange = (files) => {
     const file = files;
+    console.log("Handle file change");
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -54,6 +85,7 @@ const BookView = (props) => {
     }
   };
   const handleApi = async (id, dataTmp, url, action) => {
+    if (!dataTmp.release_date) dataTmp.release_date = new Date().toString();
     const data = {
       id: id,
       title: dataTmp.title,
@@ -79,11 +111,15 @@ const BookView = (props) => {
     }
   };
   const handleSubmit = async () => {
+    console.log("Handle file submit");
+
     const form = formRef.current;
     const values = form.getFieldsValue();
+    const action = actionApi === "new" ? "addBook" : "updateBook";
+    console.log("Submit", values);
     if (!imageFile) {
-      console.log(id, values, imageUrl, "updateBook");
-      await handleApi(id, values, imageUrl, "updateBook");
+      // console.log(id, values, imageUrl, dzz);
+      await handleApi(id, values, imageUrl, action);
       return;
     }
     const uniqueFilename = `${uuidv4()}_${imageFile.name}`;
@@ -93,7 +129,7 @@ const BookView = (props) => {
     };
     const snapshot = await uploadBytes(storageRef, imageFile, metadata);
     const downloadURL = await getDownloadURL(storageRef);
-    await handleApi(id, values, downloadURL, "updateBook");
+    await handleApi(id, values, downloadURL, action);
   };
   return (
     <Style>
@@ -101,7 +137,12 @@ const BookView = (props) => {
       <div className="container-content">
         <div className="d-flex ">
           <div className="form-container">
-            <Form ref={formRef} layout="vertical">
+            <Form
+              ref={formRef}
+              // form={form}
+              layout="vertical"
+              // initialValues={bookInformation}
+            >
               <Col>
                 <Row>
                   <Form.Item
@@ -190,8 +231,8 @@ const BookView = (props) => {
               width={300}
               height={300}
               // preview={false}
+              // fallback="https://firebasestorage.googleapis.com/v0/b/quiz-d364f.appspot.com/o/default-thumbnail.jpg?alt=media&token=574f86da-559e-4a5d-a074-2b80bc211553&_gl=1*13sbxxd*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NTUzNzU4OS42NC4xLjE2ODU1Mzc4NDQuMC4wLjA."
               src={image}
-              fallback="https://firebasestorage.googleapis.com/v0/b/quiz-d364f.appspot.com/o/default-thumbnail.jpg?alt=media&token=574f86da-559e-4a5d-a074-2b80bc211553&_gl=1*13sbxxd*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NTUzNzU4OS42NC4xLjE2ODU1Mzc4NDQuMC4wLjA."
             />
           </div>
         </div>
