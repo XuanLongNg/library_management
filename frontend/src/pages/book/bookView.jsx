@@ -1,4 +1,8 @@
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  RollbackOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -7,6 +11,7 @@ import {
   Form,
   Image,
   Input,
+  Modal,
   Row,
   Select,
   Upload,
@@ -34,6 +39,9 @@ const BookView = () => {
   const [image, setImage] = useState();
   const [imageFile, setImageFile] = useState();
   const [imageUrl, setImageUrl] = useState(image_default);
+  const [componentDisabled, setComponentDisabled] = useState(
+    actionApi === "edit" ? true : false
+  );
 
   const defaultBookInformation = {
     id: "unknown",
@@ -49,7 +57,10 @@ const BookView = () => {
     defaultBookInformation
   );
   useEffect(() => {
-    if (id === 0) return;
+    if (id === "0") {
+      formRef.current?.setFieldsValue(bookInformation);
+      return;
+    }
     const getBookInformation = async () => {
       const url = URL_BASE + "/api/user/getBook/" + id;
       const response = await axios.get(url);
@@ -92,7 +103,7 @@ const BookView = () => {
       author: dataTmp.author,
       description: dataTmp.description,
       nop: dataTmp.nop,
-      release_date: moment(dataTmp.release_date.$d).format("YYYY-MM-DD"),
+      release_date: moment(dataTmp.release_date.$d).format("YYYY/MM/DD"),
       category: dataTmp.category,
       image: url,
     };
@@ -101,9 +112,18 @@ const BookView = () => {
       const response = await axios.post(url_api, data);
       const message = response.data.message;
       if (message === "Success") {
-        notification.success({ message: "Success" });
+        notification.success({
+          message: "Success",
+          description: "You will reach the item price page in 2s",
+        });
+        let href = `/admin/item/${id}/${actionApi}`;
+        if (response.data.id)
+          href = `/admin/item/${response.data.id}/${actionApi}`;
+        setTimeout(() => {
+          window.location.href = href;
+        }, 2000);
       } else {
-        notification.error({ message: "Error" });
+        notification.error({ message: "Book exits" });
       }
     } catch (err) {
       console.log("Error: " + err);
@@ -131,18 +151,35 @@ const BookView = () => {
     const downloadURL = await getDownloadURL(storageRef);
     await handleApi(id, values, downloadURL, action);
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    handleSubmit();
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   return (
     <Style>
       <h1 className="header d-flex justify-content-center">Book</h1>
+      <Button
+        type="primary"
+        icon={<RollbackOutlined />}
+        onClick={() => {
+          window.location.href = "/admin/booklist";
+        }}
+      >
+        Back to list
+      </Button>
       <div className="container-content">
         <div className="d-flex ">
           <div className="form-container">
-            <Form
-              ref={formRef}
-              // form={form}
-              layout="vertical"
-              // initialValues={bookInformation}
-            >
+            <Form ref={formRef} layout="vertical" disabled={componentDisabled}>
               <Col>
                 <Row>
                   <Form.Item
@@ -215,53 +252,75 @@ const BookView = () => {
             </Form>
           </div>
           <div className="image-container d-flex flex-column justify-content-center align-items-center">
-            <Upload
-              className="btn-upload"
-              maxCount={1}
-              beforeUpload={(file) => {
-                handleFileUpload(file);
-                handleFileChange(file);
-                return false; // Prevent automatic upload
-              }}
-            >
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
-            <Image
-              className="image"
-              width={300}
-              height={300}
-              // preview={false}
-              // fallback="https://firebasestorage.googleapis.com/v0/b/quiz-d364f.appspot.com/o/default-thumbnail.jpg?alt=media&token=574f86da-559e-4a5d-a074-2b80bc211553&_gl=1*13sbxxd*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NTUzNzU4OS42NC4xLjE2ODU1Mzc4NDQuMC4wLjA."
-              src={image}
-            />
+            {!componentDisabled && (
+              <Upload
+                className="btn-upload"
+                maxCount={1}
+                beforeUpload={(file) => {
+                  handleFileUpload(file);
+                  handleFileChange(file);
+                  return false; // Prevent automatic upload
+                }}
+              >
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
+            )}
+            <Image className="image" width={300} height={300} src={image} />
           </div>
         </div>
         <div className="divider-container">
           <Divider className="divider" />
         </div>
         <div className="d-flex flex-row-reverse container-btn">
-          <Button
-            className="btn-action"
-            type="primary"
-            danger
-            onClick={handleSubmit}
-          >
-            Save
-          </Button>
+          {actionApi !== "new" && !componentDisabled && (
+            <Button
+              className="btn-action"
+              type="primary"
+              onClick={() => setComponentDisabled(true)}
+            >
+              Cancel
+            </Button>
+          )}
+          {actionApi !== "new" && !componentDisabled && (
+            <Button
+              className="btn-action"
+              type="primary"
+              danger
+              onClick={() => showModal(actionApi)}
+            >
+              Save
+            </Button>
+          )}
           <Button
             className="btn-action"
             type="primary"
             disabled={actionApi === "edit" ? true : false}
+            onClick={() => showModal(actionApi)}
           >
             Add
           </Button>
-          <Button
-            className="btn-action"
-            type="primary"
-            disabled={actionApi === "new" ? true : false}
-          >
-            Edit
-          </Button>
+          {componentDisabled && (
+            <Button
+              className="btn-action"
+              type="primary"
+              disabled={actionApi === "new" ? true : false}
+              onClick={() => setComponentDisabled(false)}
+            >
+              Edit
+            </Button>
+          )}
+          <Modal
+            title={
+              actionApi === "new"
+                ? "Are you sure adding this book"
+                : "Are you sure edit this book"
+            }
+            open={isModalOpen}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          />
+
+          {/* </Modal> */}
         </div>
       </div>
     </Style>

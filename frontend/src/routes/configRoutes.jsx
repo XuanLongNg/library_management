@@ -6,6 +6,7 @@ import Login from "../pages/login/login";
 import Register from "../pages/register/register";
 import BookList from "../pages/bookList/bookList";
 import BookView from "../pages/book/bookView";
+import PriceItemView from "../pages/priceItemView/PriceItemView";
 
 const ConfigRoutes = [
   {
@@ -24,11 +25,15 @@ const ConfigRoutes = [
     // layout: MainLayout,
   },
   {
-    path: AppRoutes.BOOKVIEW,
+    path: AppRoutes.ADMIN + AppRoutes.PRICE_ITEM,
+    element: <PriceItemView />,
+  },
+  {
+    path: AppRoutes.ADMIN + AppRoutes.BOOK_VIEW,
     element: <BookView />,
   },
   {
-    path: AppRoutes.BOOKLIST,
+    path: AppRoutes.ADMIN + AppRoutes.BOOK_LIST,
     element: <BookList />,
   },
   {

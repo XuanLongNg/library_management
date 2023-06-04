@@ -64,10 +64,17 @@ class MysqlServices {
     image,
     release_date,
   }) {
-    const query =
+    let query = `select id from book where title = '${title}' and author = '${author}'`;
+    const [data] = await MysqlConfig.promise().query(query);
+    if (data.length !== 0) return 0;
+    query =
       "insert into book(title, author, description, nop,category, image, release_date) " +
       `values ("${title}","${author}","${description}", ${nop}, "${category}", "${image}", "${release_date}");`;
     await MysqlConfig.promise().query(query);
+    query = "select MAX(id) as id from book";
+    const [datatmp] = await MysqlConfig.promise().query(query);
+    console.log("Get: ", datatmp[0].id);
+    return datatmp[0].id;
   }
   async updateBook({
     id,
@@ -93,11 +100,12 @@ class MysqlServices {
     query = `delete from book where id = ${id};`;
     await MysqlConfig.promise().query(query);
   }
-  async addItem({ id, for_sale, cost, purchase_price, rent_price, quantity }) {
+  async addItem({ id, status, cost, purchase_price, rent_price, quantity }) {
     const query =
-      "insert into item(id, for_sale, cost, purchase_price,rent_price, quantity) " +
-      `values (${id},${for_sale},${cost}, ${purchase_price}, ${rent_price}, ${quantity});`;
-    await MysqlConfig.promise().query(query);
+      "insert into item(id, status, cost, purchase_price,rent_price, quantity) " +
+      `values (${id},"${status}",${cost}, ${purchase_price}, ${rent_price}, ${quantity});`;
+    const [data] = await MysqlConfig.promise().query(query);
+    console.log(data);
   }
   async getItem({ id }) {
     const query = "select * from item" + ` where id = '${id}'`;
@@ -105,17 +113,10 @@ class MysqlServices {
     if (data.length > 0) return data[0];
     return undefined;
   }
-  async updateItem({
-    id,
-    for_sale,
-    cost,
-    purchase_price,
-    rent_price,
-    quantity,
-  }) {
+  async updateItem({ id, status, cost, purchase_price, rent_price, quantity }) {
     const query =
       "update item " +
-      `set for_sale = ${for_sale},cost = ${cost}, purchase_price =${purchase_price}, rent_price = ${rent_price}, quantity =${quantity}` +
+      `set status = "${status}",cost = ${cost}, purchase_price =${purchase_price}, rent_price = ${rent_price}, quantity =${quantity}` +
       ` where id = ${id}`;
     await MysqlConfig.promise().query(query);
   }

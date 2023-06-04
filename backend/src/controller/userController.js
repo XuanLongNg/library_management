@@ -69,6 +69,7 @@ class UserController {
       };
       const bookData = await mysqlServices.getBook(data);
       if (bookData) return res.status(200).send(bookData);
+      return res.status(200).send({ message: "book not found" });
     } catch (error) {
       console.log("Error: ", error);
       res.status(404).send({ message: "Server internal error" });
@@ -79,8 +80,10 @@ class UserController {
       const data = {
         ...req.body,
       };
-      await mysqlServices.addBook(data);
-      return res.status(200).send({ message: "Success" });
+      const id = await mysqlServices.addBook(data);
+      console.log("Add book id: ", id);
+      if (id != 0) return res.status(200).send({ message: "Success", id });
+      return res.status(200).send({ message: "Book exits" });
     } catch (error) {
       console.log("Error: ", error);
       res.status(404).send({ message: "Server internal error" });
@@ -130,6 +133,7 @@ class UserController {
       };
       const itemData = await mysqlServices.getItem(data);
       if (itemData) return res.status(200).send(itemData);
+      return res.status(200).send({ message: "item not found" });
     } catch (error) {
       console.log("Error: ", error);
       res.status(404).send({ message: "Server internal error" });

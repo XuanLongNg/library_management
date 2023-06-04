@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Space, Table, Tag, notification } from "antd";
+import { Button, Modal, Space, Table, Tag, notification } from "antd";
 import axios from "axios";
 import { URL_BASE } from "../../constants";
 import Style from "./style";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 
 const BookList = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const columns = [
     {
       title: "Id",
@@ -43,12 +44,18 @@ const BookList = () => {
             <Button
               type="primary"
               onClick={() => {
-                window.location.href = "/book/" + data.id + "/view";
+                window.location.href = "/admin/book/" + data.id + "/view";
               }}
             >
               View
             </Button>
-            <Button danger type="primary" onClick={() => handleDelete(data.id)}>
+            <Modal
+              title="Are you sure delete this book?"
+              open={isModalOpen}
+              onOk={() => handleOk(data.id)}
+              onCancel={handleCancel}
+            ></Modal>
+            <Button danger type="primary" onClick={showModal}>
               Delete
             </Button>
           </Space>
@@ -56,6 +63,19 @@ const BookList = () => {
       },
     },
   ];
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = (id) => {
+    console.log(id);
+    setIsModalOpen(false);
+    handleDelete(id);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const [data, setData] = useState();
   const [rerender, setRerender] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,7 +114,7 @@ const BookList = () => {
         type="primary"
         icon={<PlusOutlined />}
         onClick={() => {
-          window.location.href = "/book/0/new";
+          window.location.href = "/admin/book/0/new";
         }}
       >
         Add Book
