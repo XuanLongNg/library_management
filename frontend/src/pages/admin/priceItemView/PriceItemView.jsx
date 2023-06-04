@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Form, Input, Modal, Select, notification } from "antd";
 import { useParams } from "react-router";
-import { URL_BASE } from "../../constants";
+import { URL_BASE } from "../../../constants";
 import axios from "axios";
 
 const { Option } = Select;
@@ -23,7 +23,7 @@ const PriceItemView = () => {
         description: "You will return to the list after 3s",
       });
       setTimeout(() => {
-        window.location.href = "/admin/booklist";
+        window.location.href = "/admin/books";
       }, 3000);
     } catch (error) {
       notification.error({

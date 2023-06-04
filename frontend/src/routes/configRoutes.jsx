@@ -4,9 +4,10 @@ import { Navigate } from "react-router";
 import AppRoutes from "./appRoutes";
 import Login from "../pages/login/login";
 import Register from "../pages/register/register";
-import BookList from "../pages/bookList/bookList";
-import BookView from "../pages/book/bookView";
-import PriceItemView from "../pages/priceItemView/PriceItemView";
+import BookList from "../pages/admin/bookList/bookList";
+import BookView from "../pages/admin/book/bookView";
+import PriceItemView from "../pages/admin/priceItemView/PriceItemView";
+import BooksUserView from "../pages/user/bookList/BooksUserView";
 
 const ConfigRoutes = [
   {
@@ -33,8 +34,12 @@ const ConfigRoutes = [
     element: <BookView />,
   },
   {
-    path: AppRoutes.ADMIN + AppRoutes.BOOK_LIST,
+    path: AppRoutes.ADMIN + AppRoutes.BOOKS_VIEW,
     element: <BookList />,
+  },
+  {
+    path: AppRoutes.BOOKS_VIEW,
+    element: <BooksUserView />,
   },
   {
     path: "*",

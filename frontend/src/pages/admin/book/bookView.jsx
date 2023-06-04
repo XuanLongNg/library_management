@@ -22,11 +22,11 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import Style from "./style";
 import axios from "axios";
-import FirebaseConfig from "../../configs/firebaseConfig";
+import FirebaseConfig from "../../../configs/firebaseConfig";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { URL_BASE } from "../../constants";
+import { URL_BASE } from "../../../constants";
 
 const firebaseConfig = new FirebaseConfig();
 const image_default =

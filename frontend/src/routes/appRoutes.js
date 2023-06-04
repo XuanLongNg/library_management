@@ -3,7 +3,7 @@ class AppRoutes {
   static LOGIN = "/login";
   static ADMIN = "/admin";
   static REGISTER = "/register";
-  static BOOK_LIST = "/booklist";
+  static BOOKS_VIEW = "/books";
   static BOOK_VIEW = "/book/:id/:action";
   static PRICE_ITEM = "/item/:id/:action";
   static NOT_FOUND = "/404";

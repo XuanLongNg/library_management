@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Space, Table, Tag, notification } from "antd";
 import axios from "axios";
-import { URL_BASE } from "../../constants";
+import { URL_BASE } from "../../../constants";
 import Style from "./style";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 
