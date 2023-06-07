@@ -171,7 +171,7 @@ const BookView = () => {
         type="primary"
         icon={<RollbackOutlined />}
         onClick={() => {
-          window.location.href = "/admin/booklist";
+          window.location.href = "/admin/books";
         }}
       >
         Back to list

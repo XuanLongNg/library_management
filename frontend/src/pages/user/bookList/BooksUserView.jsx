@@ -1,9 +1,10 @@
-import { Card, List, Space, Tag } from "antd";
+import { Card, Dropdown, List, Space, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { URL_BASE } from "../../../constants";
 import axios from "axios";
 import Style from "./style";
 import { MessageOutlined, StarOutlined } from "@ant-design/icons";
+import moment from "moment";
 const data = [
   {
     title: "One piece",
@@ -20,6 +21,7 @@ const data = [
     category: "Supernatural",
   },
 ];
+
 const IconText = ({ icon, text }) => (
   <Space>
     {React.createElement(icon)}
@@ -40,6 +42,7 @@ const BooksUserView = () => {
     };
     getBooks();
   }, []);
+
   return (
     <Style>
       <List
@@ -52,42 +55,74 @@ const BooksUserView = () => {
           },
           pageSize: 12,
         }}
-        renderItem={(item) => (
-          <List.Item
-            className="item"
-            data-aos="fade-down"
-            data-aos-easing="ease-in-out"
-          >
-            <a className="container-card" href={item.image}>
-              <div
-                className="card"
-                style={{ backgroundImage: `url(${item.image})` }}
-              >
-                <div className="content d-flex justify-content-end align-items-start flex-column">
-                  <p className="title">{item.title}</p>
-                  {/* <p className="author">{item.author}</p> */}
-                  <Tag className="author" color="#2db7f5">
-                    {item.author}
-                  </Tag>
-
-                  {/* <Tag color="#2db7f5">{item.category}</Tag> */}
-                  <div className="d-flex">
-                    <IconText
-                      icon={StarOutlined}
-                      text={"4" + "/5"}
-                      key="list-vertical-star-o"
-                    />
-                    <IconText
-                      icon={MessageOutlined}
-                      text={"4"}
-                      key="list-vertical-message"
-                    />
+        renderItem={(item) => {
+          const items = [
+            {
+              key: "1",
+              label: (
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>Author: {item.author}</p>
+                  <p>Description: {item.description}</p>
+                  <div>
+                    Category:{" "}
+                    <Tag className="author" color="#2db7f5">
+                      {item.category}
+                    </Tag>
                   </div>
+                  <p>
+                    Release date:{" "}
+                    {moment(item.release_date).format("DD/MM/YYYY")}
+                  </p>
                 </div>
-              </div>
-            </a>
-          </List.Item>
-        )}
+              ),
+            },
+          ];
+          return (
+            <List.Item
+              className="item"
+              data-aos="fade-down"
+              data-aos-easing="ease-in-out"
+            >
+              <Dropdown
+                menu={{
+                  items,
+                }}
+              >
+                <a
+                  onClick={(e) => e.preventDefault()}
+                  className="container-card"
+                  href={item.image}
+                >
+                  <div
+                    className="card"
+                    style={{ backgroundImage: `url(${item.image})` }}
+                  >
+                    <div className="content d-flex justify-content-end align-items-start flex-column">
+                      <p className="title">{item.title}</p>
+
+                      <Tag className="author" color="#2db7f5">
+                        {item.author}
+                      </Tag>
+                      <div className="d-flex">
+                        <IconText
+                          icon={StarOutlined}
+                          text={"4" + "/5"}
+                          key="list-vertical-star-o"
+                        />
+                        <IconText
+                          icon={MessageOutlined}
+                          text={"4"}
+                          key="list-vertical-message"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </Dropdown>
+            </List.Item>
+          );
+        }}
       />
     </Style>
   );
