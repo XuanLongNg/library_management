@@ -5,22 +5,6 @@ import axios from "axios";
 import Style from "./style";
 import { MessageOutlined, StarOutlined } from "@ant-design/icons";
 import moment from "moment";
-const data = [
-  {
-    title: "One piece",
-    author: "Eiichiro Oda",
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/quiz-d364f.appspot.com/o/default-thumbnail.jpg?alt=media&token=574f86da-559e-4a5d-a074-2b80bc211553&_gl=1*13sbxxd*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NTUzNzU4OS42NC4xLjE2ODU1Mzc4NDQuMC4wLjA.",
-    category: "Supernatural",
-  },
-  {
-    title: "One piece",
-    author: "Eiichiro Oda",
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/quiz-d364f.appspot.com/o/default-thumbnail.jpg?alt=media&token=574f86da-559e-4a5d-a074-2b80bc211553&_gl=1*13sbxxd*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NTUzNzU4OS42NC4xLjE2ODU1Mzc4NDQuMC4wLjA.",
-    category: "Supernatural",
-  },
-];
 
 const IconText = ({ icon, text }) => (
   <Space>
@@ -90,9 +74,9 @@ const BooksUserView = () => {
                 }}
               >
                 <a
-                  onClick={(e) => e.preventDefault()}
                   className="container-card"
-                  href={item.image}
+                  href={`/book/${item.id}/view`}
+                  target="_blank"
                 >
                   <div
                     className="card"

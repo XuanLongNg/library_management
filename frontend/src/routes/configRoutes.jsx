@@ -8,6 +8,7 @@ import BookList from "../pages/admin/bookList/bookList";
 import BookView from "../pages/admin/book/bookView";
 import PriceItemView from "../pages/admin/priceItemView/PriceItemView";
 import BooksUserView from "../pages/user/bookList/BooksUserView";
+import BookUserView from "../pages/user/bookView/BookUserView";
 
 const ConfigRoutes = [
   {
@@ -40,6 +41,10 @@ const ConfigRoutes = [
   {
     path: AppRoutes.BOOKS_VIEW,
     element: <BooksUserView />,
+  },
+  {
+    path: AppRoutes.BOOK_VIEW,
+    element: <BookUserView />,
   },
   {
     path: "*",
