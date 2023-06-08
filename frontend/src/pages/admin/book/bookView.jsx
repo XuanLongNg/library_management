@@ -265,7 +265,7 @@ const BookView = () => {
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>
               </Upload>
             )}
-            <Image className="image" width={300} height={300} src={image} />
+            <Image className="image" height={300} src={image} />
           </div>
         </div>
         <div className="divider-container">

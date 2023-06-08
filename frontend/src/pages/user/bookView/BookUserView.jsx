@@ -13,11 +13,15 @@ import moment from "moment";
 import { URL_BASE } from "../../../constants";
 import ModalBuy from "./components/modalBuy/modalBuy";
 import ModalRent from "./components/modalRent/modalRent";
+import ModalPayment from "./components/modalPayment/ModalPayment";
 
 const BookUserView = () => {
   const { id } = useParams();
   const [bookInformation, setBookInformation] = useState();
+  const [item, setItem] = useState();
+  const [totalPrice, setTotalPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [day, setDay] = useState(0);
   useEffect(() => {
     setIsLoading(true);
     const getBookInformation = async () => {
@@ -29,7 +33,15 @@ const BookUserView = () => {
       setBookInformation(data);
       console.log("Image", data.image);
     };
+    const getItem = async () => {
+      const url = URL_BASE + "/api/user/getItem/" + id;
+      const response = await axios.get(url);
+      const data = response.data;
+      setItem(data);
+      console.log("Item", data);
+    };
     getBookInformation();
+    getItem();
     console.log("Log Book effect", bookInformation);
     console.log("Use Effect");
     setIsLoading(false);
@@ -40,101 +52,91 @@ const BookUserView = () => {
     setIsModalBuyBookOpen(true);
   };
 
-  const handleBuyBookOk = () => {
-    setIsModalBuyBookOpen(false);
-  };
-
-  const handleBuyBookCancel = () => {
-    setIsModalBuyBookOpen(false);
-  };
   const [isModalRentBookOpen, setIsModalRentBookOpen] = useState(false);
   const showModalRentBook = () => {
     setIsModalRentBookOpen(true);
   };
+  const [isModalPaymentOpen, setIsModalPaymentOpen] = useState(false);
 
-  const handleRentBookOk = () => {
-    setIsModalRentBookOpen(false);
-  };
-
-  const handleRentBookCancel = () => {
-    setIsModalRentBookOpen(false);
-  };
   if (isLoading) return <div>Loading...</div>;
   return (
     <Style>
-      {/* <h1 className="header d-flex justify-content-center">Book View</h1> */}
-      <Button
-        type="primary"
-        icon={<RollbackOutlined />}
-        onClick={() => {
-          window.location.href = "/books";
-        }}
-      >
-        Back to list
-      </Button>
-      <div className="container-content">
-        <div className="d-flex ">
-          <div className="image-container d-flex flex-column justify-content-center align-items-center">
-            <Image
-              className="image"
-              height={"400px"}
-              src={bookInformation?.image}
-            />
+      <div>
+        <Button
+          type="primary"
+          icon={<RollbackOutlined />}
+          onClick={() => {
+            window.location.href = "/books";
+          }}
+        >
+          Back to list
+        </Button>
+        <div className="container-content">
+          <div className="d-flex ">
+            <div className="image-container d-flex flex-column justify-content-center align-items-center">
+              <Image
+                className="image"
+                height={"400px"}
+                src={bookInformation?.image}
+              />
+            </div>
+            <div>
+              <h3>{bookInformation?.title}</h3>
+              <p>Author: {bookInformation?.author}</p>
+              <p>Number of pages: {bookInformation?.nop}</p>
+              <p>Release: {bookInformation?.release_date._i}</p>
+              <Tag color="#2db7f5">{bookInformation?.category}</Tag>
+              <p>
+                4/5 <StarOutlined />
+              </p>
+              <p>Description: {bookInformation?.description}</p>
+            </div>
           </div>
-          <div>
-            <h3>{bookInformation?.title}</h3>
-            <p>Author: {bookInformation?.author}</p>
-            <p>Number of pages: {bookInformation?.nop}</p>
-            <p>Release: {bookInformation?.release_date._i}</p>
-            <Tag color="#2db7f5">{bookInformation?.category}</Tag>
-            <p>
-              4/5 <StarOutlined />
-            </p>
-            <p>Description: {bookInformation?.description}</p>
-          </div>
-        </div>
-        {/* <div className="divider-container">
+          {/* <div className="divider-container">
           <Divider className="divider" />
         </div> */}
-        <div className="d-flex flex-row-reverse container-btn">
-          <Button
-            className="btn-action"
-            type="primary"
-            // danger
-            onClick={() => showModalBuyBook()}
-          >
-            Buy
-          </Button>
+          <div className="d-flex flex-row-reverse container-btn">
+            <Button
+              className="btn-action"
+              type="primary"
+              onClick={() => showModalBuyBook()}
+            >
+              Buy
+            </Button>
 
-          <Button
-            className="btn-action"
-            type="primary"
-            onClick={() => showModalRentBook()}
-          >
-            Rent
-          </Button>
-
-          {/* <Modal
-            title={"How many books do you want to buy?"}
-            open={isModalBuyBookOpen}
-            onOk={handleBuyBookOk}
-            onCancel={handleBuyBookCancel}
-          /> */}
-          {/* <Modal
-            title={"How many days do you want to rent?"}
-            open={isModalRentBookOpen}
-            onOk={handleRentBookOk}
-            onCancel={handleRentBookCancel}
-          /> */}
-          <ModalBuy
-            isModalOpen={isModalBuyBookOpen}
-            setIsModalOpen={setIsModalBuyBookOpen}
-          />
-          <ModalRent
-            isModalOpen={isModalRentBookOpen}
-            setIsModalOpen={setIsModalRentBookOpen}
-          />
-          {/* </Modal> */}
+            <Button
+              className="btn-action"
+              type="primary"
+              onClick={() => showModalRentBook()}
+            >
+              Rent
+            </Button>
+            <ModalBuy
+              price={item?.purchase_price}
+              totalPrice={totalPrice}
+              setTotalPrice={setTotalPrice}
+              isModalOpen={isModalBuyBookOpen}
+              setIsModalOpen={setIsModalBuyBookOpen}
+              modalPayment={setIsModalPaymentOpen}
+            />
+            <ModalPayment
+              day={day}
+              totalPrice={totalPrice}
+              modalBuy={setIsModalBuyBookOpen}
+              modalRent={setIsModalRentBookOpen}
+              isModalOpen={isModalPaymentOpen}
+              setIsModalOpen={setIsModalPaymentOpen}
+            />
+            <ModalRent
+              setDay={setDay}
+              price={item?.rent_price}
+              totalPrice={totalPrice}
+              setTotalPrice={setTotalPrice}
+              isModalOpen={isModalRentBookOpen}
+              setIsModalOpen={setIsModalRentBookOpen}
+              modalPayment={setIsModalPaymentOpen}
+            />
+          </div>
         </div>
       </div>
     </Style>

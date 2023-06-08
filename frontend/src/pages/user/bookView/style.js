@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const Style = styled.div`
   width: 80%;
-  margin: auto;
+  margin: 5em auto;
   .header {
     margin: 1em 0 1em;
   }

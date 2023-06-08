@@ -11,7 +11,7 @@ const Style = styled.div`
       .card {
         width: 13em;
         height: 40vh;
-        background: no-repeat center/cover;
+        /* background:  */
         position: relative;
         .content {
           width: 100%;

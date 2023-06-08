@@ -31,7 +31,15 @@ const BooksUserView = () => {
     <Style>
       <List
         className="list-card"
-        grid={{ gutter: 16, column: 6 }}
+        grid={{
+          gutter: 16,
+          column: 6,
+          xs: 1,
+          sm: 2,
+          md: 3,
+          lg: 4,
+          xl: 6,
+        }}
         dataSource={data}
         pagination={{
           onChange: (page) => {
@@ -40,6 +48,7 @@ const BooksUserView = () => {
           pageSize: 12,
         }}
         renderItem={(item) => {
+          console.log(item.image);
           const items = [
             {
               key: "1",
@@ -80,7 +89,9 @@ const BooksUserView = () => {
                 >
                   <div
                     className="card"
-                    style={{ backgroundImage: `url(${item.image})` }}
+                    style={{
+                      background: `url("${item.image}") no-repeat center/cover`,
+                    }}
                   >
                     <div className="content d-flex justify-content-end align-items-start flex-column">
                       <p className="title">{item.title}</p>

@@ -156,6 +156,7 @@ class UserController {
       const data = {
         ...req.body,
       };
+      console.log(data);
       await mysqlServices.createBill(data);
       return res.status(200).send({ message: "Success" });
     } catch (error) {
