@@ -96,6 +96,13 @@ const BookList = () => {
     }
   };
   useEffect(() => {
+    if (localStorage?.role !== "admin") {
+      notification.error({ message: "You are not allowed to view this page" });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+      return;
+    }
     setIsLoading(true);
     const getData = async () => {
       const url = URL_BASE + "/api/user/getBooks";

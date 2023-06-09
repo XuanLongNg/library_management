@@ -3,6 +3,7 @@ import { Button, Form, Input, Modal, Select, notification } from "antd";
 import { useParams } from "react-router";
 import { URL_BASE } from "../../../constants";
 import axios from "axios";
+import Style from "./style";
 
 const { Option } = Select;
 
@@ -35,6 +36,13 @@ const PriceItemView = () => {
     showModal();
   };
   useEffect(() => {
+    if (localStorage?.role !== "admin") {
+      notification.error({ message: "You are not allowed to view this page" });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+      return;
+    }
     const getValues = async () => {
       try {
         const url = URL_BASE + "/api/user/getItem/" + id;
@@ -73,7 +81,7 @@ const PriceItemView = () => {
     setIsModalOpen(false);
   };
   return (
-    <div>
+    <Style>
       <Form
         ref={formRef}
         name="basic"
@@ -134,7 +142,7 @@ const PriceItemView = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       ></Modal>
-    </div>
+    </Style>
   );
 };
 export default PriceItemView;

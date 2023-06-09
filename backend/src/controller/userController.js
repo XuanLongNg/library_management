@@ -20,6 +20,7 @@ class UserController {
           name: userData.name,
           username: userData.username,
           email: userData.email,
+          role: userData.role,
         };
         return res.send({ message: "Login complete", data: dataSend });
       }
@@ -44,6 +45,20 @@ class UserController {
       }
     } catch (err) {
       console.log("Error: ", err);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async getNameById(req, res) {
+    try {
+      const id = req.params.id;
+      const data = {
+        ...req.body,
+        id,
+      };
+      const name = await mysqlServices.getNameById(data);
+      return res.status(200).send(name);
+    } catch (error) {
+      console.log(error);
       res.status(404).send({ message: "Server internal error" });
     }
   }
@@ -224,6 +239,20 @@ class UserController {
       return res.status(200).send({ message: "Success" });
     } catch (error) {
       console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async getFeedback(req, res) {
+    try {
+      const id = req.params.id;
+      const data = {
+        ...req.body,
+        id,
+      };
+      const dataFeedback = await mysqlServices.getFeedback(data);
+      return res.status(200).send(dataFeedback);
+    } catch (error) {
+      console.log(error);
       res.status(404).send({ message: "Server internal error" });
     }
   }

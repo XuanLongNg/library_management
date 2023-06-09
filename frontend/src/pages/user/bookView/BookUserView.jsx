@@ -24,27 +24,13 @@ import ModalBuy from "./components/modalBuy/modalBuy";
 import ModalRent from "./components/modalRent/modalRent";
 import ModalPayment from "./components/modalPayment/ModalPayment";
 
-const data = [
-  {
-    title: "Ant Design Title 1",
-  },
-  {
-    title: "Ant Design Title 2",
-  },
-  {
-    title: "Ant Design Title 3",
-  },
-  {
-    title: "Ant Design Title 4",
-  },
-];
-
 const BookUserView = () => {
   const { id } = useParams();
   const [bookInformation, setBookInformation] = useState();
   const [item, setItem] = useState();
   const [totalPrice, setTotalPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState();
   const [day, setDay] = useState(0);
   useEffect(() => {
     setIsLoading(true);
@@ -64,8 +50,16 @@ const BookUserView = () => {
       setItem(data);
       console.log("Item", data);
     };
+    const getFeedback = async () => {
+      let url = URL_BASE + "/api/user/getFeedback/" + id;
+      const response = await axios.get(url);
+      const data = response.data;
+      setData(data);
+      console.log("Item", data);
+    };
     getBookInformation();
     getItem();
+    getFeedback();
     console.log("Log Book effect", bookInformation);
     console.log("Use Effect");
     setIsLoading(false);
@@ -201,8 +195,13 @@ const BookUserView = () => {
                         size="large"
                       />
                     }
-                    title={item.title}
-                    description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                    title={
+                      <div className="d-flex">
+                        <p style={{ marginRight: "1em" }}>{item.name}</p>
+                        <p style={{ color: "gray" }}>{item.time}</p>
+                      </div>
+                    }
+                    description={item.comment}
                   />
                 </List.Item>
               )}

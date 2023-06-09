@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Space, Table, Tag, notification } from "antd";
+import {
+  Button,
+  Input,
+  Modal,
+  Rate,
+  Space,
+  Table,
+  Tag,
+  notification,
+} from "antd";
 import axios from "axios";
 import { URL_BASE } from "../../../constants";
 import Style from "./style";
+import moment from "moment";
 
 const HistoryPurchase = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalFeedbackOpen, setIsModalFeedbackOpen] = useState(false);
+
   const [record, setRecord] = useState();
   const columns = [
     {
@@ -73,7 +85,13 @@ const HistoryPurchase = () => {
               </Button>
             )}
             {record.status === "paid" && (
-              <Button type="primary" onClick={showModal}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  setRecord(record);
+                  showModalFeedback();
+                }}
+              >
                 Feedback
               </Button>
             )}
@@ -94,6 +112,43 @@ const HistoryPurchase = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+  const handleFeedback = async () => {
+    try {
+      const url = URL_BASE + "/api/user/addFeedback";
+      const data = {
+        id_user: record.id_user,
+        id_item: record.id_item,
+        name: localStorage.name,
+        star: valueRating,
+        comment: feedback,
+        time: moment(new Date()).format("YYYY-MM-DD"),
+      };
+      console.log("Data send1: ", data);
+      const response = await axios.post(url, data);
+      if ((response.message = "Success")) {
+        notification.success({ message: "Success" });
+      } else {
+        notification.error({ message: "error" });
+      }
+      setRerender(rerender + 1);
+    } catch (error) {
+      notification.error({ message: "Bad request" });
+      throw error;
+    }
+  };
+  const showModalFeedback = () => {
+    setIsModalFeedbackOpen(true);
+  };
+
+  const handleFeedbackOk = () => {
+    console.log(record);
+    setIsModalFeedbackOpen(false);
+    handleFeedback();
+  };
+
+  const handleFeedbackCancel = () => {
+    setIsModalFeedbackOpen(false);
   };
   const [data, setData] = useState();
   const [rerender, setRerender] = useState(0);
@@ -136,6 +191,8 @@ const HistoryPurchase = () => {
     };
     getData();
   }, [rerender]);
+  const [feedback, setFeedback] = useState("");
+  const [valueRating, setValueRating] = useState(0);
   if (isLoading) return <div>Loading...</div>;
   return (
     <Style>
@@ -146,6 +203,29 @@ const HistoryPurchase = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       />
+      <Modal
+        title="Feedback"
+        open={isModalFeedbackOpen}
+        onOk={handleFeedbackOk}
+        onCancel={handleFeedbackCancel}
+      >
+        <span>
+          Rating:{" "}
+          <Rate
+            value={valueRating}
+            onChange={(e) => {
+              setValueRating(e);
+            }}
+          />
+        </span>
+        <Input
+          placeholder="Feedback"
+          value={feedback}
+          onChange={(e) => {
+            setFeedback(e.target.value);
+          }}
+        />
+      </Modal>
       <Table columns={columns} dataSource={data} pagination={false} />
     </Style>
   );

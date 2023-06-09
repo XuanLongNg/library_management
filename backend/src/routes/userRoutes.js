@@ -13,6 +13,7 @@ const getParams = (urlString) => {
 
 userRoutes.post("/login", UserController.Login);
 userRoutes.post("/register", UserController.Register);
+userRoutes.get("/getName/:id", UserController.getNameById);
 
 userRoutes.post("/addBook", UserController.addBook);
 userRoutes.get("/getBooks", UserController.getBooks);
@@ -30,6 +31,7 @@ userRoutes.get("/getBill/:id/user", UserController.getBillByUser);
 userRoutes.get("/getBill/:id", UserController.getBillById);
 
 userRoutes.post("/addFeedback", UserController.addFeedback);
+userRoutes.get("/getFeedback/:id", UserController.getFeedback);
 userRoutes.post("/updateFeedback", UserController.updateFeedback);
 userRoutes.get("/deleteFeedback", (req, res) => {
   const queryObject = getParams(req.url);

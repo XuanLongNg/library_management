@@ -25,6 +25,8 @@ const Login = () => {
           localStorage.name = response.data.data.name;
           localStorage.username = response.data.data.username;
           localStorage.email = response.data.data.email;
+          localStorage.role = response.data.data.role;
+
           notification.success({
             message: "Login complete",
           });

@@ -64,17 +64,55 @@ const Bill = () => {
     console.log("Use Effect");
     setIsLoading(false);
   }, []);
-
-  const [isModalBuyBookOpen, setIsModalBuyBookOpen] = useState(false);
+  const handleApi = async () => {
+    try {
+      const url = URL_BASE + "/api/user/createBill";
+      const data = {
+        id_user: localStorage.id,
+        id_item: bill.id_item,
+        time: bill.time,
+        time_start:
+          bill.money % item.rent_price == 0
+            ? moment(new Date()).format("YYYY/MM/DD")
+            : null,
+        time_end:
+          bill.money % item.rent_price == 0
+            ? moment(new Date())
+                .add(bill.money / item.rent_price, "days")
+                .format("YYYY/MM/DD")
+            : null,
+        money: bill.money,
+        status: "paid",
+      };
+      const response = await axios.post(url, data);
+      if (response.data.message === "Success") {
+        notification.success({
+          message: "Success",
+          description: "You will return history after 3s",
+        });
+        setTimeout(() => {
+          window.location.href = "/history/purchase";
+        }, 3000);
+      } else {
+        notification.error({ message: "Error" });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const showModalBuyBook = () => {
-    setIsModalBuyBookOpen(true);
+    setIsModalOpen(true);
   };
 
-  const [isModalRentBookOpen, setIsModalRentBookOpen] = useState(false);
-  const showModalRentBook = () => {
-    setIsModalRentBookOpen(true);
+  const handleOk = () => {
+    handleApi();
+    setIsModalOpen(false);
   };
-  const [isModalPaymentOpen, setIsModalPaymentOpen] = useState(false);
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   if (isLoading) return <div>Loading...</div>;
   return (
@@ -119,62 +157,32 @@ const Bill = () => {
             </div>
           </div>
           <div className="d-flex flex-row-reverse container-btn">
-            <Button
-              className="btn-action"
-              type="primary"
-              onClick={() => {
-                if (!localStorage.id) {
-                  notification.error({
-                    message: "You must be logged in to use this feature",
-                  });
-                  return;
-                }
-                showModalBuyBook();
-              }}
+            {bill.status == "unpaid" && (
+              <Button
+                className="btn-action"
+                type="primary"
+                onClick={() => {
+                  if (!localStorage.id) {
+                    notification.error({
+                      message: "You must be logged in to use this feature",
+                    });
+                    return;
+                  }
+                  showModalBuyBook();
+                }}
+              >
+                Purchase
+              </Button>
+            )}
+            <Modal
+              zIndex={100}
+              title={"Are you sure to buy it??"}
+              open={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
             >
-              Buy
-            </Button>
-
-            <Button
-              className="btn-action"
-              type="primary"
-              onClick={() => {
-                if (!localStorage.id) {
-                  notification.error({
-                    message: "You must be logged in to use this feature",
-                  });
-                  return;
-                }
-                showModalRentBook();
-              }}
-            >
-              Rent
-            </Button>
-            {/* <ModalBuy
-              price={item?.purchase_price}
-              totalPrice={totalPrice}
-              setTotalPrice={setTotalPrice}
-              isModalOpen={isModalBuyBookOpen}
-              setIsModalOpen={setIsModalBuyBookOpen}
-              modalPayment={setIsModalPaymentOpen}
-            />
-            <ModalPayment
-              day={day}
-              totalPrice={totalPrice}
-              modalBuy={setIsModalBuyBookOpen}
-              modalRent={setIsModalRentBookOpen}
-              isModalOpen={isModalPaymentOpen}
-              setIsModalOpen={setIsModalPaymentOpen}
-            />
-            <ModalRent
-              setDay={setDay}
-              price={item?.rent_price}
-              totalPrice={totalPrice}
-              setTotalPrice={setTotalPrice}
-              isModalOpen={isModalRentBookOpen}
-              setIsModalOpen={setIsModalRentBookOpen}
-              modalPayment={setIsModalPaymentOpen}
-            /> */}
+              <p>Total price: {bill.money}</p>
+            </Modal>
           </div>
         </div>
       </div>

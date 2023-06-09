@@ -7,18 +7,26 @@ import Logout from "../../../../utils/logout";
 
 const UserArea = (props) => {
   const items = [
-    {
+    localStorage.role === "admin" && {
       key: "1",
       label: (
-        <a target="_blank" href="/user/view">
-          Information
+        <a
+          style={{ textDecoration: "none" }}
+          target="_blank"
+          href="/admin/books"
+        >
+          Manager books
         </a>
       ),
     },
     {
       key: "2",
       label: (
-        <a target="_blank" href="/history/purchase">
+        <a
+          style={{ textDecoration: "none" }}
+          target="_blank"
+          href="/history/purchase"
+        >
           Purchase history
         </a>
       ),

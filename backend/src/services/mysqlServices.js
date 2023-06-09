@@ -41,6 +41,14 @@ class MysqlServices {
       `values ("${name}","${username}","${password}", "${email}", "${role}");`;
     await MysqlConfig.promise().query(query);
   }
+  async getNameById({ id }) {
+    const query = "select name from user" + ` where id = '${id}'`;
+    const [data] = await MysqlConfig.promise().query(query);
+    if (data.length > 0) {
+      return data[0];
+    }
+    return undefined;
+  }
   async getBooks() {
     const query = `select * from book`;
     console.log(query);
@@ -201,12 +209,12 @@ class MysqlServices {
     }
     return undefined;
   }
-  async addFeedback({ id_user, id_item, time, star, comment }) {
+  async addFeedback({ id_user, name, id_item, time, star, comment }) {
     if (!comment) comment = null;
     else comment = `"${comment}"`;
     const query =
-      "insert into feedback (id_user, id_item, time, star, comment)" +
-      ` values(${id_user}, ${id_item}, "${time}", ${star}, ${comment})`;
+      "insert into feedback (id_user, id_item, name,time, star, comment)" +
+      ` values(${id_user}, ${id_item}, "${name}", "${time}", ${star}, ${comment})`;
     await MysqlConfig.promise().query(query);
   }
   async updateFeedback({ id_user, id_item, time, star, comment }) {
@@ -217,6 +225,17 @@ class MysqlServices {
       ` set time = "${time}", star = ${star}, comment = ${comment} ` +
       `where id_user = ${id_user} and id_item = ${id_item} `;
     await MysqlConfig.promise().query(query);
+  }
+  async getFeedback({ id }) {
+    const query = "select * from feedback" + ` where id_item = '${id}'`;
+    const [data] = await MysqlConfig.promise().query(query);
+    if (data.length > 0) {
+      for (let i = 0; i < data.length; i++) {
+        data[i].time = moment(data[i].time).format("YYYY-MM-DD");
+      }
+      return data;
+    }
+    return undefined;
   }
   async deleteFeedback({ id_user, id_item }) {
     const query =

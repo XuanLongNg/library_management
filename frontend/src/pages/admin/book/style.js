@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 const Style = styled.div`
   width: 80%;
-  margin: auto;
-  .header {
+  margin: 5em auto;
+  .header-view {
     margin: 1em 0 1em;
   }
   .container-content {

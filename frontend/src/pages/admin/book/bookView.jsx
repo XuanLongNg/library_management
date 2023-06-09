@@ -57,6 +57,13 @@ const BookView = () => {
     defaultBookInformation
   );
   useEffect(() => {
+    if (localStorage?.role !== "admin") {
+      notification.error({ message: "You are not allowed to view this page" });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+      return;
+    }
     if (id === "0") {
       formRef.current?.setFieldsValue(bookInformation);
       return;
@@ -138,7 +145,6 @@ const BookView = () => {
     const action = actionApi === "new" ? "addBook" : "updateBook";
     console.log("Submit", values);
     if (!imageFile) {
-      // console.log(id, values, imageUrl, dzz);
       await handleApi(id, values, imageUrl, action);
       return;
     }
@@ -166,7 +172,7 @@ const BookView = () => {
   };
   return (
     <Style>
-      <h1 className="header d-flex justify-content-center">Book</h1>
+      <h1 className="header-view d-flex justify-content-center">Book</h1>
       <Button
         type="primary"
         icon={<RollbackOutlined />}

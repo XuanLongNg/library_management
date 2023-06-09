@@ -37,11 +37,7 @@ const ModalPayment = (props) => {
       if (response.data.message === "Success") {
         notification.success({
           message: "Success",
-          description: "You will return list after 3s",
         });
-        setTimeout(() => {
-          window.location.href = "/books";
-        }, 3000);
       } else {
         notification.error({ message: "Error" });
       }
