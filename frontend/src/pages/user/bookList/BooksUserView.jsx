@@ -53,20 +53,27 @@ const BooksUserView = () => {
             {
               key: "1",
               label: (
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>Author: {item.author}</p>
-                  <p>Description: {item.description}</p>
-                  <div>
+                <div
+                  style={{
+                    maxWidth: "300px",
+                    maxHeight: "35vh",
+                    overflow: "hidden",
+                  }}
+                  className="dropdown-content"
+                >
+                  <h3 style={{ margin: "0" }}>{item.title}</h3>
+                  <p style={{ margin: "0" }}>Author: {item.author}</p>
+                  <div style={{ margin: "0" }}>
                     Category:{" "}
                     <Tag className="author" color="#2db7f5">
                       {item.category}
                     </Tag>
                   </div>
-                  <p>
+                  <p style={{ margin: "0" }}>
                     Release date:{" "}
                     {moment(item.release_date).format("DD/MM/YYYY")}
                   </p>
+                  <p style={{ margin: "0" }}>Description: {item.description}</p>
                 </div>
               ),
             },
@@ -100,16 +107,14 @@ const BooksUserView = () => {
                         {item.author}
                       </Tag>
                       <div className="d-flex">
-                        <IconText
-                          icon={StarOutlined}
-                          text={"4" + "/5"}
-                          key="list-vertical-star-o"
-                        />
-                        <IconText
-                          icon={MessageOutlined}
-                          text={"4"}
-                          key="list-vertical-message"
-                        />
+                        <div className="d-flex align-items-center justify-content-center star">
+                          <StarOutlined className="icon-img" />
+                          <p className="content-icon">4/5</p>
+                        </div>
+                        <div className="d-flex align-items-center justify-content-center star">
+                          <MessageOutlined className="icon-img" />
+                          <p className="content-icon">4</p>
+                        </div>
                       </div>
                     </div>
                   </div>

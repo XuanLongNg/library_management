@@ -1,6 +1,7 @@
 const mysql = require("mysql2");
 const MysqlConfig = require("../configs/mysqlConfig");
 const Hashing = require("../utils/hashing");
+const moment = require("moment");
 class MysqlServices {
   constructor() {}
   async hasUser({ username }) {
@@ -171,6 +172,34 @@ class MysqlServices {
       ` set id_user = ${id_user}, id_item = ${id_item}, time = "${time}", time_start = ${time_start}, time_end = ${time_end}, money = ${money}, status = "${status}" ` +
       `where id = ${id}`;
     await MysqlConfig.promise().query(query);
+  }
+  async getBillByUser({ id }) {
+    const query = "select * from bill" + ` where id_user = '${id}'`;
+    const [data] = await MysqlConfig.promise().query(query);
+    if (data.length > 0) {
+      for (let i = 0; i < data.length; i++) {
+        data[i].time = moment(data[i].time).format("YYYY-MM-DD");
+        if (data[i].time_start)
+          data[i].time_start = moment(data[i].time_start).format("YYYY-MM-DD");
+        if (data[i].time_end)
+          data[i].time_end = moment(data[i].time_end).format("YYYY-MM-DD");
+      }
+      return data;
+    }
+    return undefined;
+  }
+  async getBillById({ id }) {
+    const query = "select * from bill" + ` where id = '${id}'`;
+    const [data] = await MysqlConfig.promise().query(query);
+    if (data.length > 0) {
+      data[0].time = moment(data[0].time).format("YYYY-MM-DD");
+      if (data[0].time_start)
+        data[0].time_start = moment(data[0].time_start).format("YYYY-MM-DD");
+      if (data[0].time_end)
+        data[0].time_end = moment(data[0].time_end).format("YYYY-MM-DD");
+      return data[0];
+    }
+    return undefined;
   }
   async addFeedback({ id_user, id_item, time, star, comment }) {
     if (!comment) comment = null;

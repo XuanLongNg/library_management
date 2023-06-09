@@ -1,8 +1,9 @@
 import styled from "styled-components";
+import colors from "../../../styles/color/color";
 
 const Style = styled.div`
-  padding: 1em;
-  margin-top: 5em;
+  padding: 5em 4em;
+  background-color: ${colors.black_blue_color};
   .list-card {
     .container-card {
       height: 40vh;
@@ -31,6 +32,15 @@ const Style = styled.div`
           .author {
             margin: 4px 0;
           }
+          .star {
+            margin-right: 1em;
+            .icon-img {
+              margin: 0 0.5em 0 0;
+            }
+            .content-icon {
+              margin: 0 1em 0 0;
+            }
+          }
         }
       }
       .card:hover {
@@ -38,6 +48,12 @@ const Style = styled.div`
           height: 100%;
         }
       }
+    }
+    .ant-pagination-item-link {
+      color: white;
+    }
+    .dropdown-content {
+      max-width: 300px;
     }
   }
 `;

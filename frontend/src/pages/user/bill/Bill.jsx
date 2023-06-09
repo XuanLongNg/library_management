@@ -20,35 +20,21 @@ import Style from "./style";
 import axios from "axios";
 import moment from "moment";
 import { URL_BASE } from "../../../constants";
-import ModalBuy from "./components/modalBuy/modalBuy";
-import ModalRent from "./components/modalRent/modalRent";
-import ModalPayment from "./components/modalPayment/ModalPayment";
+// import ModalBuy from "./components/modalBuy/modalBuy";
+// import ModalRent from "./components/modalRent/modalRent";
+// import ModalPayment from "./components/modalPayment/ModalPayment";
 
-const data = [
-  {
-    title: "Ant Design Title 1",
-  },
-  {
-    title: "Ant Design Title 2",
-  },
-  {
-    title: "Ant Design Title 3",
-  },
-  {
-    title: "Ant Design Title 4",
-  },
-];
-
-const BookUserView = () => {
+const Bill = () => {
   const { id } = useParams();
   const [bookInformation, setBookInformation] = useState();
   const [item, setItem] = useState();
+  const [bill, setBill] = useState({ id_item: 1 });
   const [totalPrice, setTotalPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [day, setDay] = useState(0);
   useEffect(() => {
     setIsLoading(true);
-    const getBookInformation = async () => {
+    const getBookInformation = async (id) => {
       const url = URL_BASE + "/api/user/getBook/" + id;
       const response = await axios.get(url);
       const data = response.data;
@@ -57,15 +43,23 @@ const BookUserView = () => {
       setBookInformation(data);
       console.log("Image", data.image);
     };
-    const getItem = async () => {
+    const getItem = async (id) => {
       const url = URL_BASE + "/api/user/getItem/" + id;
       const response = await axios.get(url);
       const data = response.data;
       setItem(data);
       console.log("Item", data);
     };
-    getBookInformation();
-    getItem();
+    const getBill = async () => {
+      const url = URL_BASE + "/api/user/getBill/" + id;
+      const response = await axios.get(url);
+      const data = response.data;
+      setBill(data);
+      console.log("Item", data);
+      await getBookInformation(data.id_item);
+      await getItem(data.id_item);
+    };
+    getBill();
     console.log("Log Book effect", bookInformation);
     console.log("Use Effect");
     setIsLoading(false);
@@ -92,10 +86,10 @@ const BookUserView = () => {
           type="primary"
           icon={<RollbackOutlined />}
           onClick={() => {
-            window.location.href = "/books";
+            window.location.href = "/history/purchase";
           }}
         >
-          Back to list
+          Back to history
         </Button>
         <div className="container-content">
           <div className="d-flex container-content-form">
@@ -119,9 +113,9 @@ const BookUserView = () => {
               <p className="d-flex align-items-center star-feedback">
                 4/5 <StarOutlined />
               </p>
-              <p className="description">
-                Description: {bookInformation?.description}
-              </p>
+              <p className="description">Time: {bill?.time}</p>
+              <p className="description">Status: {bill?.status}</p>
+              <p className="description">Total price: {bill?.money}</p>
             </div>
           </div>
           <div className="d-flex flex-row-reverse container-btn">
@@ -156,7 +150,7 @@ const BookUserView = () => {
             >
               Rent
             </Button>
-            <ModalBuy
+            {/* <ModalBuy
               price={item?.purchase_price}
               totalPrice={totalPrice}
               setTotalPrice={setTotalPrice}
@@ -180,37 +174,11 @@ const BookUserView = () => {
               isModalOpen={isModalRentBookOpen}
               setIsModalOpen={setIsModalRentBookOpen}
               modalPayment={setIsModalPaymentOpen}
-            />
-          </div>
-          <div className="container-feedback">
-            <Divider className="divider-feedback" orientation="left">
-              Feedback
-            </Divider>
-            <List
-              className="list-feedback"
-              itemLayout="horizontal"
-              dataSource={data}
-              renderItem={(item, index) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar
-                        src={
-                          "https://firebasestorage.googleapis.com/v0/b/library-management-c6238.appspot.com/o/d97d5214-82a1-44b3-81a8-ac1d9c908994_beluga.jpg?alt=media&token=8e309d27-5b1f-4bb2-b7ae-a4d0f4ad0d7a&_gl=1*12opo6v*_ga*MzczNDAyOTQ5LjE2ODA4ODU2OTU.*_ga_CW55HF8NVT*MTY4NjI4NzQ4MC42Ny4xLjE2ODYyODc1MTkuMC4wLjA."
-                        }
-                        size="large"
-                      />
-                    }
-                    title={item.title}
-                    description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                  />
-                </List.Item>
-              )}
-            />
+            /> */}
           </div>
         </div>
       </div>
     </Style>
   );
 };
-export default BookUserView;
+export default Bill;

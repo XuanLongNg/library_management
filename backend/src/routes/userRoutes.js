@@ -26,6 +26,8 @@ userRoutes.post("/updateItem", UserController.updateItem);
 
 userRoutes.post("/createBill", UserController.createBill);
 userRoutes.post("/updateBill", UserController.updateBill);
+userRoutes.get("/getBill/:id/user", UserController.getBillByUser);
+userRoutes.get("/getBill/:id", UserController.getBillById);
 
 userRoutes.post("/addFeedback", UserController.addFeedback);
 userRoutes.post("/updateFeedback", UserController.updateFeedback);

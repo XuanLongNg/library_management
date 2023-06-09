@@ -21,11 +21,16 @@ const Login = () => {
         const message = response.data.message;
         console.log(message);
         if (message === "Login complete") {
-          document.cookie = response.data.id;
-          console.log(document.cookie);
+          localStorage.id = response.data.data.id;
+          localStorage.name = response.data.data.name;
+          localStorage.username = response.data.data.username;
+          localStorage.email = response.data.data.email;
           notification.success({
             message: "Login complete",
           });
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 3000);
           SetIsLogin(true);
           setLoading(false);
           return;

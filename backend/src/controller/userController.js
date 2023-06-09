@@ -7,13 +7,6 @@ class UserController {
     const controller = new UserController();
     return controller;
   }
-  async isLogin(req, res, next) {
-    if (req.session.user === req.body.id) {
-      return res.send({ message: "logged" });
-    } else {
-      return res.send({ message: "not logged in" });
-    }
-  }
   async Login(req, res) {
     try {
       const data = {
@@ -22,7 +15,13 @@ class UserController {
       const authenticate = await mysqlServices.authenticate(data);
       if (authenticate) {
         const userData = await mysqlServices.getUser(data);
-        return res.send({ message: "Login complete", id: userData.id });
+        const dataSend = {
+          id: userData.id,
+          name: userData.name,
+          username: userData.username,
+          email: userData.email,
+        };
+        return res.send({ message: "Login complete", data: dataSend });
       }
       return res.send({ message: "Login failed" });
     } catch (err) {
@@ -173,6 +172,34 @@ class UserController {
       return res.status(200).send({ message: "Success" });
     } catch (error) {
       console.log("Error: ", error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async getBillByUser(req, res) {
+    try {
+      const id = req.params.id;
+      const data = {
+        ...req.body,
+        id,
+      };
+      const dataBill = await mysqlServices.getBillByUser(data);
+      return res.status(200).send(dataBill);
+    } catch (error) {
+      console.log(error);
+      res.status(404).send({ message: "Server internal error" });
+    }
+  }
+  async getBillById(req, res) {
+    try {
+      const id = req.params.id;
+      const data = {
+        ...req.body,
+        id,
+      };
+      const dataBill = await mysqlServices.getBillById(data);
+      return res.status(200).send(dataBill);
+    } catch (error) {
+      console.log(error);
       res.status(404).send({ message: "Server internal error" });
     }
   }

@@ -5,6 +5,9 @@ class Color {
     this.white = "#fff";
     this.gray = "#ccc";
     this.black = "#000";
+    this.main_bg_color = "#FFFFFF";
+    this.main_text_color = "#000000";
+    this.main_btn_color = "#1677ff";
     // some color pairs
     // 1
     this.greyish = "#667985";
