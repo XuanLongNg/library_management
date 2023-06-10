@@ -132,6 +132,8 @@ class MysqlServices {
   async deleteBook({ id }) {
     let query = `delete from feedback where id_item like ${id};`;
     await MysqlConfig.promise().query(query);
+    query = `delete from bill where id_item like ${id};`;
+    await MysqlConfig.promise().query(query);
     query = `delete from item where id = ${id};`;
     await MysqlConfig.promise().query(query);
     query = `delete from book where id = ${id};`;
