@@ -49,13 +49,15 @@ const BookList = () => {
             >
               View
             </Button>
-            <Modal
-              title="Are you sure delete this book?"
-              open={isModalOpen}
-              onOk={() => handleOk(data.id)}
-              onCancel={handleCancel}
-            ></Modal>
-            <Button danger type="primary" onClick={showModal}>
+
+            <Button
+              danger
+              type="primary"
+              onClick={() => {
+                setIdDelete(data.id);
+                showModal();
+              }}
+            >
               Delete
             </Button>
           </Space>
@@ -67,10 +69,10 @@ const BookList = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = (id) => {
-    console.log(id);
+  const handleOk = () => {
+    console.log(idDelete);
     setIsModalOpen(false);
-    handleDelete(id);
+    handleDelete();
   };
 
   const handleCancel = () => {
@@ -79,9 +81,10 @@ const BookList = () => {
   const [data, setData] = useState();
   const [rerender, setRerender] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const handleDelete = async (id) => {
+  const [idDelete, setIdDelete] = useState(0);
+  const handleDelete = async () => {
     try {
-      const url = URL_BASE + "/api/user/deleteBook/" + id;
+      const url = URL_BASE + "/api/user/deleteBook/" + idDelete;
       console.log(url);
       const response = await axios.get(url);
       if ((response.message = "success")) {
@@ -126,6 +129,14 @@ const BookList = () => {
       >
         Add Book
       </Button>
+      <Modal
+        title="Are you sure delete this book?"
+        open={isModalOpen}
+        onOk={() => {
+          handleOk();
+        }}
+        onCancel={handleCancel}
+      ></Modal>
       <Table columns={columns} dataSource={data} pagination={false} />
     </Style>
   );

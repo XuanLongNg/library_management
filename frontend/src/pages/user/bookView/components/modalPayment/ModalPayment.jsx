@@ -16,6 +16,12 @@ const ModalPayment = (props) => {
     props.setIsModalOpen(false);
   };
   const handleApi = async (money, action) => {
+    if (money <= 0) {
+      notification.error({
+        message: "The total price must be at least greater than 0",
+      });
+      return;
+    }
     try {
       const url = URL_BASE + "/api/user/createBill";
       const data = {

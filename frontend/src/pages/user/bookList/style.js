@@ -52,9 +52,6 @@ const Style = styled.div`
     .ant-pagination-item-link {
       color: white;
     }
-    .dropdown-content {
-      max-width: 300px;
-    }
   }
 `;
 export default Style;
